@@ -8,6 +8,12 @@ type Issue struct {
 	Status   string
 	Assignee string
 	Body     string
+	Comments []Comment
+}
+
+type Comment struct {
+	Author string
+	Body   string
 }
 
 func (i Issue) Title() string       { return fmt.Sprintf("[%s] %s", i.Key, i.Summary) }
