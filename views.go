@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/ndemco/gojira/jira"
@@ -25,11 +26,26 @@ func (m model) homeView() string {
 	rw := m.width - lw - 6
 	h := m.height - 4
 
-	leftStyle := inactiveBox
-	if m.activePane == listPane {
-		leftStyle = activeBox
+	var left string
+	if m.showFilter {
+		filterStyle := inactiveBox
+		if m.activePane == filterPane {
+			filterStyle = activeBox
+		}
+		listStyle := inactiveBox
+		if m.activePane == listPane {
+			listStyle = activeBox
+		}
+		filterBox := filterStyle.Width(lw).Height(filterInnerHeight).Render(m.filterView())
+		listBox := listStyle.Width(lw).Height(h - filterInnerHeight - 2).Render(m.list.View())
+		left = lipgloss.JoinVertical(lipgloss.Left, filterBox, listBox)
+	} else {
+		listStyle := inactiveBox
+		if m.activePane == listPane {
+			listStyle = activeBox
+		}
+		left = listStyle.Width(lw).Height(h).Render(m.list.View())
 	}
-	left := leftStyle.Width(lw).Height(h).Render(m.list.View())
 
 	rightStyle := inactiveBox
 	if m.activePane == detailPane {
@@ -37,11 +53,27 @@ func (m model) homeView() string {
 	}
 	right := rightStyle.Width(rw).Height(h).Render(m.detailView(rw))
 
-	help := helpStyle.Render("↑/↓ navigate  enter/tab switch pane  1 home  2 settings  q quit")
+	help := helpStyle.Render("↑/↓ navigate  enter/tab switch pane  f filter  esc close  1 home  2 settings  q quit")
 	return lipgloss.JoinVertical(lipgloss.Left,
 		lipgloss.JoinHorizontal(lipgloss.Top, left, right),
 		help,
 	)
+}
+
+func (m model) filterView() string {
+	var sb strings.Builder
+	sb.WriteString(keyStyle.Render("Filter") + "\n\n")
+	for i, opt := range filterOptions {
+		if i == m.filterCursor {
+			sb.WriteString(keyStyle.Render("▸ " + opt))
+		} else {
+			sb.WriteString(labelStyle.Render("  " + opt))
+		}
+		if i < len(filterOptions)-1 {
+			sb.WriteString("\n")
+		}
+	}
+	return sb.String()
 }
 
 func (m model) settingsView() string {
