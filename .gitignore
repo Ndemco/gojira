@@ -1,0 +1,18 @@
+# Binary
+gojira
+
+# Environment
+.env
+
+# Build artifacts
+*.exe
+*.out
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
