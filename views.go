@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/ndemco/gojira/jira"
 )
 
 func (m model) View() string {
@@ -57,7 +58,7 @@ func (m model) settingsView() string {
 }
 
 func (m model) detailView(width int) string {
-	issue, ok := m.list.SelectedItem().(Issue)
+	issue, ok := m.list.SelectedItem().(jira.Issue)
 	if !ok {
 		return labelStyle.Render("Select an issue to view details.")
 	}
