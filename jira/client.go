@@ -25,11 +25,11 @@ type issueJSON struct {
 }
 
 type issueFields struct {
-	Summary     string       `json:"summary"`
-	Status      statusJSON   `json:"status"`
-	Assignee    *userJSON    `json:"assignee"`
-	Description *adfNode     `json:"description"`
-	Comment     commentPage  `json:"comment"`
+	Summary     string      `json:"summary"`
+	Status      statusJSON  `json:"status"`
+	Assignee    *userJSON   `json:"assignee"`
+	Description *adfNode    `json:"description"`
+	Comment     commentPage `json:"comment"`
 }
 
 type statusJSON struct {
@@ -49,19 +49,19 @@ type commentJSON struct {
 	Body   *adfNode `json:"body"`
 }
 
-func FetchIssues() ([]Issue, error) {
+func FetchIssues(jql string) ([]Issue, error) {
 	base := os.Getenv("JIRA_BASE_URL")
-	u, err := url.Parse(base + "/rest/api/3/search/jql")
+	url, err := url.Parse(base + "/rest/api/3/search/jql")
 	if err != nil {
 		return nil, err
 	}
-	q := u.Query()
-	q.Set("jql", "assignee = currentUser() ORDER BY updated DESC")
-	q.Set("fields", "summary,status,assignee,description,comment")
-	q.Set("maxResults", "50")
-	u.RawQuery = q.Encode()
+	query := url.Query()
+	query.Set("jql", jql)
+	query.Set("fields", "summary,status,assignee,description,comment")
+	query.Set("maxResults", "50")
+	url.RawQuery = query.Encode()
 
-	req, err := newRequest("GET", u.String(), nil)
+	req, err := buildRequest("GET", url.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func FetchIssues() ([]Issue, error) {
 	return issues, nil
 }
 
-func newRequest(method, endpoint string, body any) (*http.Request, error) {
+func buildRequest(method, endpoint string, body any) (*http.Request, error) {
 	var bodyReader io.Reader
 	if body != nil {
 		data, err := json.Marshal(body)
