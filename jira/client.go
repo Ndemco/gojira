@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var client = &http.Client{
+var client = &http.Client {
 	Timeout: 10 * time.Second,
 }
 
