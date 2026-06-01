@@ -29,7 +29,7 @@ func main() {
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 
-	p := tea.NewProgram(model{list: l}, tea.WithAltScreen())
+	p := tea.NewProgram(model{HomeState: homeState{Issues: l}}, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)

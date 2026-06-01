@@ -27,28 +27,28 @@ func (m model) homeView() string {
 	h := m.height - 4
 
 	var left string
-	if m.showFilter {
+	if m.HomeState.ShowFilter {
 		filterStyle := inactiveBox
-		if m.activePane == filterPane {
+		if m.HomeState.ActivePane == filterPane {
 			filterStyle = activeBox
 		}
 		listStyle := inactiveBox
-		if m.activePane == listPane {
+		if m.HomeState.ActivePane == listPane {
 			listStyle = activeBox
 		}
 		filterBox := filterStyle.Width(lw).Height(filterInnerHeight).Render(m.filterView())
-		listBox := listStyle.Width(lw).Height(h - filterInnerHeight - 2).Render(m.list.View())
+		listBox := listStyle.Width(lw).Height(h - filterInnerHeight - 2).Render(m.HomeState.Issues.View())
 		left = lipgloss.JoinVertical(lipgloss.Left, filterBox, listBox)
 	} else {
 		listStyle := inactiveBox
-		if m.activePane == listPane {
+		if m.HomeState.ActivePane == listPane {
 			listStyle = activeBox
 		}
-		left = listStyle.Width(lw).Height(h).Render(m.list.View())
+		left = listStyle.Width(lw).Height(h).Render(m.HomeState.Issues.View())
 	}
 
 	rightStyle := inactiveBox
-	if m.activePane == detailPane {
+	if m.HomeState.ActivePane == detailPane {
 		rightStyle = activeBox
 	}
 	right := rightStyle.Width(rw).Height(h).Render(m.detailView(rw))
@@ -62,9 +62,10 @@ func (m model) homeView() string {
 
 func (m model) filterView() string {
 	var sb strings.Builder
-	sb.WriteString(keyStyle.Render("Filter") + "\n\n")
+	sb.WriteString(keyStyle.Render("Filter"))
+	sb.WriteString("\n\n")
 	for i, opt := range filterOptions {
-		if i == m.filterCursor {
+		if i == m.HomeState.FilterCursor {
 			sb.WriteString(keyStyle.Render("▸ " + opt))
 		} else {
 			sb.WriteString(labelStyle.Render("  " + opt))
@@ -90,7 +91,7 @@ func (m model) settingsView() string {
 }
 
 func (m model) detailView(width int) string {
-	issue, ok := m.list.SelectedItem().(jira.Issue)
+	issue, ok := m.HomeState.Issues.SelectedItem().(jira.Issue)
 	if !ok {
 		return labelStyle.Render("Select an issue to view details.")
 	}
