@@ -11,6 +11,9 @@ gojira
 # macOS
 .DS_Store
 
+# Jira API index (regenerate with script/refresh_jira_api)
+.claude/jira_api/
+
 # Editor
 .idea/
 .vscode/
