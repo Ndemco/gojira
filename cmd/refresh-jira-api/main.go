@@ -1,11 +1,9 @@
-//go:build ignore
-
-// refresh_jira_api downloads the Jira Cloud REST API v3 OpenAPI spec and
+// refresh-jira-api downloads the Jira Cloud REST API v3 OpenAPI spec and
 // regenerates the .claude/jira_api/ endpoint index used by the /jira-api skill.
 //
 // Usage (from repo root):
 //
-//	go run scripts/refresh_jira_api.go
+//	script/refresh_jira_api
 //
 // The spec URL can be overridden with -url. The output directory defaults to
 // .claude/jira_api and can be overridden with -out.
