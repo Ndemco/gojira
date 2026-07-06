@@ -27,11 +27,15 @@ const (
 	screenSettings
 )
 
-var filterOptions = []string{
-	"Assigned to me",
-	"Reported by me",
-	"All open issues",
-	"By project",
+type quickFilter struct {
+	Name string
+	JQL  string
+}
+
+var quickFilterOptions = []quickFilter{
+	{"Assigned to me", "assignee = currentUser() ORDER BY updated DESC"},
+	{"Reported by me", "reporter = currentUser() ORDER BY updated DESC"},
+	{"All open issues", "resolution = Unresolved ORDER BY updated DESC"},
 }
 
 const filterInnerHeight = 6 // "Filter\n\n" + 4 option rows

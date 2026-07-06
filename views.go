@@ -64,13 +64,13 @@ func (m model) filterView() string {
 	var sb strings.Builder
 	sb.WriteString(keyStyle.Render("Filter"))
 	sb.WriteString("\n\n")
-	for i, opt := range filterOptions {
+	for i, opt := range quickFilterOptions {
 		if i == m.HomeState.FilterCursor {
-			sb.WriteString(keyStyle.Render("▸ " + opt))
+			sb.WriteString(keyStyle.Render("▸ " + opt.Name))
 		} else {
-			sb.WriteString(labelStyle.Render("  " + opt))
+			sb.WriteString(labelStyle.Render("  " + opt.Name))
 		}
-		if i < len(filterOptions)-1 {
+		if i < len(quickFilterOptions)-1 {
 			sb.WriteString("\n")
 		}
 	}

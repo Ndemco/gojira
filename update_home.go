@@ -1,7 +1,9 @@
 package main
 
 import (
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/ndemco/gojira/jira"
 )
 
 func (m model) updateHome(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -29,9 +31,19 @@ func updateFilterPane(m model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.HomeState.FilterCursor--
 		}
 	case "down", "j":
-		if m.HomeState.FilterCursor < len(filterOptions)-1 {
+		if m.HomeState.FilterCursor < len(quickFilterOptions)-1 {
 			m.HomeState.FilterCursor++
 		}
+	case "enter":
+		var issues, err = jira.FetchIssues(quickFilterOptions[m.HomeState.FilterCursor].JQL)
+		if err != nil {
+			break
+		}
+		items := make([]list.Item, len(issues))
+		for i, issue := range issues {
+			items[i] = issue
+		}
+		m.HomeState.Issues.SetItems(items)
 	case "esc":
 		m.HomeState.ShowFilter = false
 		m.HomeState.ActivePane = listPane
