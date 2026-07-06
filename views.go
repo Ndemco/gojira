@@ -111,11 +111,25 @@ func (m model) detailView(width int) string {
 		Padding(0, 1).
 		Render(issue.Status)
 
-	return fmt.Sprintf("%s\n\n%s %s\n\n%s %s\n\n%s\n%s",
+	commentsz := buildCommentsString(issue.Comments)
+
+	return fmt.Sprintf("%s\n\n%s %s\n\n%s %s\n\n%s\n%s\n\n%s\n\n%s",
 		keyStyle.Render(issue.Key+" · "+issue.Summary),
 		labelStyle.Render("Status:  "), badge,
 		labelStyle.Render("Assignee:"), issue.Assignee,
-		labelStyle.Render("Body:"),
-		issue.Body,
+		labelStyle.Render("Body:"), issue.Body,
+		labelStyle.Render("Comments"), commentsz,
 	)
+}
+
+func buildCommentsString(comments []jira.Comment) string {
+	var cb strings.Builder
+	for i, c := range comments {
+		fmt.Fprintf(&cb, "%s\n%s", authorStyle.Render(c.Author+":"), c.Body)
+		if i < len(comments)-1 {
+			cb.WriteString("\n\n")
+		}
+	}
+
+	return cb.String()
 }
